@@ -10,7 +10,7 @@ require('dotenv').config();
 
 // Update CORS configuration
 app.use(cors({
-  origin: 'http://localhost:5174', // or whatever port your SvelteKit app is running on
+  origin: '*', // or whatever port your SvelteKit app is running on
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));

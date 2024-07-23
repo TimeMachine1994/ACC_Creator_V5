@@ -17,16 +17,23 @@
   });
 
   async function createNewProject() {
-    if (newProjectName.trim()) {
-      try {
-        const newProject = await createProject(newProjectName);
-        projects = [...projects, newProject];
-        goToProject(newProject._id);
+    if (!newProjectName.trim()) {
+      alert('Project name cannot be empty.');
+      return;
+    }
 
-        newProjectName = ''; // Reset the input field
-      } catch (error) {
-        console.error('Failed to create project:', error);
+    try {
+      const newProject = await createProject({ name: newProjectName });
+      if (newProject && newProject._id) {
+        goToProject(newProject._id);
+      } else {
+        throw new Error('Failed to create project.');
       }
+    } catch (error) {
+      console.error('Failed to create new project:', error);
+      alert(`Failed to create new project: ${error.message}`);
+    } finally {
+      newProjectName = ''; // Clear the input field
     }
   }
 
