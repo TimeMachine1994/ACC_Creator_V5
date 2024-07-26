@@ -16,9 +16,11 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use('/', projectRoutes);
 
 app.use('/api/projects', projectRoutes);
 app.use('/api/projects/:projectId/goals', goalRoutes);
+
 
 connectDB().then(() => {
   app.listen(PORT, () => {

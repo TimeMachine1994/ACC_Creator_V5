@@ -2,13 +2,13 @@
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import { chatCompletion } from '$lib/api';
+  import { getGoal, updateGoal, deleteGoal } from '$lib/api';
   import type { Goal, Chat, Note } from '$lib/types';
-  export let goal: any; // Add this line
+  export let goal: Goal;
 
   let projectId: string;
   let goalId: string;
-  let chatId: string;
-   let chat: Chat[] = [];
+  let chat: Chat[] = [];
   let notes: Note[] = [];
   let newMessage: string = '';
   let loading: boolean = true;
@@ -16,22 +16,23 @@
 
   $: projectId = $page.params.projectId;
   $: goalId = $page.params.goalId;
-  $: chatId = $page.params.chatId;
 
   onMount(async () => {
-  if (projectId && goalId && chatId) {
-    try {
-      const response = await fetch(`/api/projects/${projectId}/goals/${goalId}/chats/${chatId}`);
-      if (!response.ok) throw new Error('Failed to fetch data');
-      const data = await response.json();
-      goal = data.goal;
-      chat = data.chat;
-      notes = data.notes;
-    } catch (err) {
-      console.error('Error fetching data:', err);
+    if (projectId && goalId) {
+      try {
+        const response = getGoal(projectId, goalId);
+        if (!response.ok) throw new Error('Failed to fetch data');
+        const data = await response.json();
+        goal = data.goal;
+        chat = data.chat || [];
+        notes = data.notes || [];
+       } catch (err) {
+        console.error('Error fetching data:', err);
+        error = 'Failed to load data';
+        loading = false;
+      }
     }
-  }
-});
+  });
 
   async function addNewChat() {
     if (!newMessage.trim()) return;
